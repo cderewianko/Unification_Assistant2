@@ -1,0 +1,17 @@
+.idea/
+.venv/
+dump/
+config/
+data/
+proving/
+docker-raspberry-pi/mosquitto
+docker-raspberry-pi/postgres-data
+casper_home/tests/
+casper_home/main_PG1.py
+casper_home/main_PG2.py
+casper_home/main_PG3.py
+casper_home/main_PG4.py
+
+.flake8
+.pylintrc
+CURRENT_ISSUES.txt
