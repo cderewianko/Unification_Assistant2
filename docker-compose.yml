@@ -1,0 +1,82 @@
+services:
+  casper_home_service:
+    build:
+      context: ../casper_home
+      dockerfile: Dockerfile
+    container_name: casper_home_service
+    restart: always
+    environment:
+      - POSTGRES_HOST=docker-raspberry-pi-postgres-1
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=casper_home
+      - POSTGRES_USER=casper
+      - POSTGRES_PASSWORD=password123
+      - MQTT_HOST=casper_home-mqtt-1
+      - MQTT_PORT=1883
+    depends_on:
+      - mqtt
+      - postgres
+
+  mqtt_consumer:
+    build:
+      context: ../casper_home/mqtt_consumer
+      dockerfile: Dockerfile
+    container_name: casper_home-mqtt-consumer
+    environment:
+      - POSTGRES_HOST=docker-raspberry-pi-postgres-1
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=casper_home
+      - POSTGRES_USER=casper
+      - POSTGRES_PASSWORD=password123
+      - MQTT_HOST=mqtt
+      - MQTT_PORT=1883
+    depends_on:
+      - mqtt
+      - postgres
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-h", "localhost", "-t", "healthcheck", "-C", "1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: casper
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: casper_home
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U casper -d casper_home"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  pgadmin_data:

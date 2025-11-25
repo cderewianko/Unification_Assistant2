@@ -1,0 +1,35 @@
+
+
+# Might have missed a few:
+
+#Python 3.12
+#PostgreSQL 16 +
+#mosquitto - https://mosquitto.org/download/
+
+###
+# Core
+asyncio
+pyyaml
+Libaries
+python-kasa
+ruff
+black
+python-dotenv
+psycopg2
+pre_commit
+paho-mqtt
+aiohttp
+aiosignal
+
+# MQTT
+paho-mqtt
+
+# Database (will be used in Milestone 3)
+asyncpg
+psycopg2-binary
+
+# Dev / Linting
+flake8
+black
+isort
+
